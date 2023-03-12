@@ -25,4 +25,8 @@ public class ProductService {
     public List<Product> getAllProductsForAdmin() {
         return productDao.getAllProductsForAdmin();
     }
+
+    public Product getProductByIdForAdmin(int id) {return productDao.getProductByIdForAdmin(id);}
+
+    public ProductResultWrapper getProductByIdForUser(int id) {return productDao.getProductByIdForUser(id);}
 }

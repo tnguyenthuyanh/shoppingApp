@@ -19,32 +19,15 @@ public class ProductDao extends AbstractHibernateDao<Product> {
         setClazz(Product.class);
     }
 
-    //    public Optional<User> loadUserByUsername(String email) {
-//        return this.findByEmail(email);
-//    }
     public List<ProductResultWrapper> getAllProductsForUser() {
         Session session = getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<ProductResultWrapper> criteria = builder.createQuery(ProductResultWrapper.class);
         Root<Product> root = criteria.from(Product.class);
         criteria.multiselect(root.get("product_id"), root.get("name"), root.get("description"), root.get("retail_price"));
-//        criteria.select(builder.construct(ProductResultWrapper.class, root.get("product_id"), root.get("name"), root.get("description"), root.get("retail_price")));
-
         criteria.where(builder.notEqual(root.get("stock_quantity"), 0));
         Query query = session.createQuery(criteria);
-//        List<Product> productResultWrapperList =
         List<ProductResultWrapper> products = query.getResultList();
-//                new ArrayList();
-//        for (ProductResultWrapper pd : productResultWrapperList) {
-//            Product product = Product.builder()
-////                    .product_id(pd.getProduct_id())
-//                    .name(pd.getName())
-//                    .description(pd.getDescription())
-//                    .retail_price(pd.getRetail_price())
-//                    .build();
-//            products.add(product);
-//        }
-
 
         return products;
     }
@@ -59,4 +42,23 @@ public class ProductDao extends AbstractHibernateDao<Product> {
         List<Product> products = query.getResultList();
         return products;
     }
+
+    public Product getProductByIdForAdmin(int id) {
+        return this.findById(id);
+    }
+
+    public ProductResultWrapper getProductByIdForUser(int id) {
+        Session session = getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<ProductResultWrapper> criteria = builder.createQuery(ProductResultWrapper.class);
+        Root<Product> root = criteria.from(Product.class);
+        criteria.multiselect(root.get("product_id"), root.get("name"), root.get("description"), root.get("retail_price"));
+        criteria.where(builder.and
+                (builder.notEqual(root.get("stock_quantity"), 0), builder.equal(root.get("product_id"), id)));
+        Query query = session.createQuery(criteria);
+        List<ProductResultWrapper> products = query.getResultList();
+
+        return products.size() == 0 ? null : products.get(0);
+    }
+
 }

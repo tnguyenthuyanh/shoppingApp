@@ -11,5 +11,5 @@ import lombok.Setter;
 @Builder
 public class ProductResponse {
     ServiceStatus serviceStatus;
-    Product product;
+    Object product;
 }

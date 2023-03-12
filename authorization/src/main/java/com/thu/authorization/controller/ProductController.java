@@ -4,9 +4,11 @@ import com.thu.authorization.domain.ServiceStatus;
 
 import com.thu.authorization.domain.response.AllProductResponse;
 import com.thu.authorization.domain.entity.Product;
+import com.thu.authorization.domain.wrapper.ProductResultWrapper;
 import com.thu.authorization.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,23 +33,53 @@ public class ProductController {
 
     @GetMapping("all")
     @PreAuthorize("hasAuthority('read')")
-    public AllProductResponse getAllProducts(){
-        List<Product> products;
-        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains("write")) {
-            products = productService.getAllProductsForAdmin();
-        } else { // has read only
-            products = productService.getAllProductsForUser();
+    public AllProductResponse getAllProductsForAdmin(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("write"))) {
+            List<Product> products =  productService.getAllProductsForAdmin();
+            List<Object> objects = (List) products;
+
+            return AllProductResponse.builder()
+                    .serviceStatus(
+                            ServiceStatus.builder()
+                                    .success(true)
+                                    .build()
+                    )
+                    .products(objects)
+                    .build();
+        } else {
+           List<ProductResultWrapper> products =  productService.getAllProductsForUser();
+            List<Object> objects = (List) products;
+
+            return AllProductResponse.builder()
+                    .serviceStatus(
+                            ServiceStatus.builder()
+                                    .success(true)
+                                    .build()
+                    )
+                    .products(objects)
+                    .build();
         }
 
-        return AllProductResponse.builder()
-                .serviceStatus(
-                        ServiceStatus.builder()
-                                .success(true)
-                                .build()
-                )
-                .products(products)
-                .build();
+
     }
+
+//    @GetMapping("all")
+//    @PreAuthorize("hasAuthority('read')")
+//    public AllProductResponse getAllProductsForUser(){
+//
+//            List<Product> products = productService.getAllProductsForUser();
+//
+//
+//        return AllProductResponse.builder()
+//                .serviceStatus(
+//                        ServiceStatus.builder()
+//                                .success(true)
+//                                .build()
+//                )
+//                .products(products)
+//                .build();
+//    }
 //
 //    @GetMapping("get/{id}")
 //    @PreAuthorize("hasAuthority('read')")

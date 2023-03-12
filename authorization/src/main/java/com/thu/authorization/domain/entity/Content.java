@@ -1,4 +1,4 @@
-package com.thu.authorization.entity;
+package com.thu.authorization.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

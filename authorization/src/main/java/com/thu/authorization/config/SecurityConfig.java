@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/product/test").permitAll()
-                .antMatchers("/product/getAll", "/content/get/*").hasAuthority("read")
+                .antMatchers("/product/all").hasAuthority("read")
 //                .antMatchers("/content/getAll", "/content/get/*").hasAuthority("read")
 //                .antMatchers("/content/create").hasAuthority("write")
 //                .antMatchers("/content/update").hasAuthority("update")

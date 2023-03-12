@@ -1,7 +1,7 @@
 package com.thu.authorization.domain.response;
 
-import com.beaconfire.springsecuritycontent.domain.ServiceStatus;
-import com.beaconfire.springsecuritycontent.entity.Content;
+import com.thu.authorization.domain.ServiceStatus;
+import com.thu.authorization.domain.entity.Product;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class AllContentResponse {
+public class AllProductResponse {
     ServiceStatus serviceStatus;
-    List<Content> contents;
+    List<Product> products;
 }

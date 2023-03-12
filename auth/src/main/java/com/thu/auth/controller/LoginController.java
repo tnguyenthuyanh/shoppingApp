@@ -42,8 +42,11 @@ public class LoginController {
           authentication = authenticationManager.authenticate(
                   new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
           );
+
+
         } catch (AuthenticationException e){
             throw new BadCredentialsException("Provided credential is invalid.");
+
         }
 
         //Successfully authenticated user will be stored in the authUserDetail object
@@ -59,5 +62,7 @@ public class LoginController {
                 .build();
 
     }
+
+
 
 }

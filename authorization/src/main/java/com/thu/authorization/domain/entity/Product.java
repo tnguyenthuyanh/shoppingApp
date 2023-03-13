@@ -36,8 +36,4 @@ public class Product {
     @Column(name = "stock_quantity")
     private int stock_quantity;
 
-
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")// default fetch type is LAZY
-//    @ToString.Exclude // to avoid infinite loop
-//    private Set<OrderItem> orderItems = new HashSet<>();
 }

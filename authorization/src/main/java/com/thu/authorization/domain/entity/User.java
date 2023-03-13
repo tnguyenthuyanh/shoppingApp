@@ -31,9 +31,8 @@ public class User {
     @ToString.Exclude // to avoid infinite loop
     private Set<ProductWatchlist> ProductWatchlist = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")// default fetch type is LAZY
-    @ToString.Exclude // to avoid infinite loop
-    private Set<Order> orders = new HashSet<>();
-
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")// default fetch type is LAZY
+//    @ToString.Exclude // to avoid infinite loop
+//    private Set<Order> orders = new HashSet<>();
 
 }

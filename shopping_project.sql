@@ -30,7 +30,7 @@ insert into Permission(value, user_id) values
 ("read", 3), ("write", 3), ("delete", 3), ("update", 3);
 
 drop table if exists Product;
-create table if not exists Permission(
+create table if not exists Product(
 	product_id			int auto_increment primary key,
     name				varchar(20),
 	description			varchar(40),
@@ -39,8 +39,16 @@ create table if not exists Permission(
     stock_quantity		int
 );
 
+insert into Product(name, description, wholesale_price, retail_price, stock_quantity) values
+("book", "Harry Potter series", 19.50, 25.00, 5),
+("bookcase", "White 3-shelf bookcase", 23.15, 27.00, 9),
+("phone", "Iphone XR", 600.00, 900.00, 1),
+("Headphone", "Wireless Sony headphone", 200.00, 250.00, 0),
+("Laptop", "Dell Laptop", 600.00, 700.00, 2);
+
 drop table if exists ProductWatchlist;
-create table if not exists Permission(
+create table if not exists ProductWatchlist(
+	productWatchlist_id	int auto_increment primary key,
 	product_id			int,
 	user_id	 			int,
     foreign key (user_id) references User(user_id),
@@ -51,7 +59,7 @@ drop table if exists Order_table;
 create table if not exists Order_table(
 	order_id			int auto_increment primary key,
 	user_id	 			int,
-    order_status		varchar(20),
+    order_status		varchar(20) default "Processing",
     date_placed			timestamp default CURRENT_TIMESTAMP,
     foreign key (user_id) references User(user_id)
 );
@@ -70,6 +78,9 @@ create table if not exists OrderItem(
 
 select * from User;
 select * from Permission;
+select * from Product;
+select * from Order_table;
+select * from OrderItem;
 
 
 

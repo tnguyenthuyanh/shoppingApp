@@ -29,7 +29,6 @@ public abstract class AbstractHibernateDao<T> {
 //    }
 
     public T findById(int id) {
-        System.out.println(getClazz());
         return getCurrentSession().get(clazz, id);
     }
 

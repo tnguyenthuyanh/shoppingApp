@@ -4,6 +4,7 @@ import com.thu.auth.domain.common.AuthRequest;
 import com.thu.auth.domain.common.Response;
 import com.thu.auth.security.AuthUserDetail;
 import com.thu.auth.security.JwtProvider;
+import com.thu.auth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,6 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     private AuthenticationManager authenticationManager;
+    private UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Autowired
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {

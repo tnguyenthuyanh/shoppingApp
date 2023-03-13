@@ -2,6 +2,7 @@ package com.thu.authorization.service;
 
 import com.thu.authorization.dao.ProductDao;
 import com.thu.authorization.domain.entity.Product;
+import com.thu.authorization.domain.request.ProductRequest;
 import com.thu.authorization.domain.wrapper.ProductResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,4 +30,6 @@ public class ProductService {
     public Product getProductByIdForAdmin(int id) {return productDao.getProductByIdForAdmin(id);}
 
     public ProductResultWrapper getProductByIdForUser(int id) {return productDao.getProductByIdForUser(id);}
+
+    public void addProduct(ProductRequest request) {productDao.addProduct(request);}
 }

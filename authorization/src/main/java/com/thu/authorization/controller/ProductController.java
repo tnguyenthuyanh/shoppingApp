@@ -2,15 +2,20 @@ package com.thu.authorization.controller;
 
 import com.thu.authorization.domain.ServiceStatus;
 
+import com.thu.authorization.domain.request.OrderRequest;
+import com.thu.authorization.domain.request.ProductRequest;
 import com.thu.authorization.domain.response.AllProductResponse;
 import com.thu.authorization.domain.entity.Product;
+import com.thu.authorization.domain.response.OrderResponse;
 import com.thu.authorization.domain.response.ProductResponse;
 import com.thu.authorization.domain.wrapper.ProductResultWrapper;
+import com.thu.authorization.security.AuthUserDetail;
 import com.thu.authorization.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +40,7 @@ public class ProductController {
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('read')")
     public AllProductResponse getAllProductsForAdmin() {
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("write"))) {
             List<Product> products = productService.getAllProductsForAdmin();
@@ -65,26 +71,9 @@ public class ProductController {
 
     }
 
-    //    @GetMapping("all")
-//    @PreAuthorize("hasAuthority('read')")
-//    public AllProductResponse getAllProductsForUser(){
-//
-//            List<Product> products = productService.getAllProductsForUser();
-//
-//
-//        return AllProductResponse.builder()
-//                .serviceStatus(
-//                        ServiceStatus.builder()
-//                                .success(true)
-//                                .build()
-//                )
-//                .products(products)
-//                .build();
-//    }
-//
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('read')")
-    public ProductResponse getContentById(@PathVariable Integer id) {
+    public ProductResponse getProductById(@PathVariable Integer id) {
         Object object;
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -103,6 +92,7 @@ public class ProductController {
                                     .success(false)
                                     .build()
                     )
+                    .message("No product found!")
                     .build();
 
         }
@@ -114,12 +104,32 @@ public class ProductController {
                                 .build()
                 )
                 .product(object)
+                .message("Product found!")
                 .build();
+    }
+
+    @PostMapping("/add")
+    @PreAuthorize("hasAuthority('write')")
+    public ProductResponse addProduct(@RequestBody ProductRequest request) {
+
+        productService.addProduct(request);
+
+        return ProductResponse.builder()
+                .serviceStatus(
+                        ServiceStatus.builder()
+                                .success(true)
+                                .build()
+                )
+                .message("New product created!")
+                .product(request)
+                .build();
+
+
     }
 //
 //    @PostMapping("create")
 //    @PreAuthorize("hasAuthority('write')")
-//    public MessageResponse createContent(@RequestBody ContentCreationRequest request){
+//    public MessageResponse createContent(@RequestBody OrderRequest request){
 //        contentService.createContent(request);
 //
 //        return MessageResponse.builder()
@@ -134,7 +144,7 @@ public class ProductController {
 //
 //    @PutMapping("update")
 //    @PreAuthorize("hasAuthority('update')")
-//    public MessageResponse updateContent(@RequestBody ContentUpdateRequest request){
+//    public MessageResponse updateContent(@RequestBody ProductRequest request){
 //        contentService.updateContent(request);
 //
 //        return MessageResponse.builder()

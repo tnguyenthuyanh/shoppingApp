@@ -18,6 +18,12 @@ public class AuthUserDetail implements UserDetails {
     private boolean enabled;
     private List<GrantedAuthority> authorities;
 
+    private int user_id;
+
+    public int getUser_id() {
+        return user_id;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.authorities;

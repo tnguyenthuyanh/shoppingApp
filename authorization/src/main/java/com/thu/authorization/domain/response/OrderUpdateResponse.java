@@ -8,7 +8,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class MessageResponse {
+public class OrderUpdateResponse {
     ServiceStatus serviceStatus;
     String message;
 }
+

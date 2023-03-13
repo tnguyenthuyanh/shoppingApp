@@ -1,9 +1,15 @@
 package com.thu.authorization.dao;
 
+import com.thu.authorization.domain.entity.Order;
+import com.thu.authorization.domain.entity.OrderItem;
 import com.thu.authorization.domain.entity.Product;
 //import com.thu.authorization.domain.wrapper.ProductResultWrapper;
+import com.thu.authorization.domain.entity.User;
+import com.thu.authorization.domain.request.OrderRequest;
+import com.thu.authorization.domain.request.ProductRequest;
 import com.thu.authorization.domain.wrapper.ProductResultWrapper;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
@@ -59,6 +65,31 @@ public class ProductDao extends AbstractHibernateDao<Product> {
         List<ProductResultWrapper> products = query.getResultList();
 
         return products.size() == 0 ? null : products.get(0);
+    }
+
+    public void addProduct(ProductRequest request) {
+
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = null;
+            transaction = session.beginTransaction();
+
+            Product product = Product.builder()
+                    .name(request.getName())
+                    .description(request.getDescription())
+                    .wholesale_price(request.getWholesale_price())
+                    .retail_price(request.getRetail_price())
+                    .stock_quantity(request.getStock_quantity())
+                    .build();
+
+            session.save(product);
+
+            transaction.commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+//            if (transaction != null) transaction.rollback();
+        }
+
     }
 
 }

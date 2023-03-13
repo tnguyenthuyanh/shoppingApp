@@ -71,4 +71,5 @@ public class UserService implements UserDetailsService {
     public void createNewUser(String email, String password) {
         userDao.createNewUser(email, password);
     }
+
 }

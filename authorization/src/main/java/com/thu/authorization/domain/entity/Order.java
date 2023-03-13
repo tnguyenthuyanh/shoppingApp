@@ -13,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class Order {
 
     @Id
@@ -20,7 +21,7 @@ public class Order {
     @Column(name = "order_id", unique = true, nullable = false)
     private Integer order_id;
 
-    @Column(name = "order_status")
+    @Column(name = "order_status", insertable = false)
     private String order_status;
 
     @Column(name = "date_placed", insertable=false) // to get default value when inserting
@@ -31,7 +32,7 @@ public class Order {
     @ToString.Exclude
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")// default fetch type is LAZY
-    @ToString.Exclude // to avoid infinite loop
-    private Set<OrderItem> orderItems = new HashSet<>();
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")// default fetch type is LAZY
+//    @ToString.Exclude // to avoid infinite loop
+//    private Set<OrderItem> orderItems = new HashSet<>();
 }

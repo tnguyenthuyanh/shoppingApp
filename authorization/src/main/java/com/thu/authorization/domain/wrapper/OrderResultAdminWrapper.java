@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 public class OrderResultAdminWrapper {
 
+    private int order_id;
     private int user_id;
     private String order_status;
     private String date_placed;

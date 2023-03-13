@@ -39,20 +39,23 @@ public class OrderDao extends AbstractHibernateDao<Order> {
 
             for (OrderRequest o : request.getOrder()) {
                 Product product = session.get(Product.class, o.getProduct_id());
-                if (product == null) {
+                if (product == null || product.getStock_quantity() == 0) {
                     if (transaction != null) {
-                        System.out.println("hehee");
+//                        System.out.println("hehee");
                         transaction.rollback();
                     }
                     return -1;
                 } else {
                     if (o.getQuantity() > product.getStock_quantity()) {
                         if (transaction != null) {
-                            System.out.println("hehee1111");
+//                            System.out.println("hehee1111");
                             transaction.rollback();
                         }
                         return -2;
                     }
+                    product.setStock_quantity(product.getStock_quantity() - o.getQuantity());
+                    session.save(product);
+
                     OrderItem orderItem = OrderItem.builder()
                             .order(order)
                             .product(product)
@@ -61,6 +64,8 @@ public class OrderDao extends AbstractHibernateDao<Order> {
                             .wholesale_price(product.getWholesale_price())
                             .build();
                     session.save(orderItem);
+
+
                 }
             }
             transaction.commit();
@@ -97,6 +102,7 @@ public class OrderDao extends AbstractHibernateDao<Order> {
         order.setOrder_status((String) resultListlist.get(0)[5]);
         order.setDate_placed((String) resultListlist.get(0)[6]);
         order.setUser_id(user_id);
+        order.setOrder_id(order_id);
         for (Object[] aRow : resultListlist) {
             OrderItemResultWrapper orderItem = OrderItemResultWrapper.builder()
                     .product_id((Integer) aRow[0]) //product_id
@@ -112,6 +118,60 @@ public class OrderDao extends AbstractHibernateDao<Order> {
 
         return order;
 
+    }
+
+    public AllOrderResultWrapper getAllOrdersForUser(int user_id) {
+        Session session = getCurrentSession();
+        Query query = session.createQuery(
+                "select o.order_id "
+                        + "from Order o "
+                        + "JOIN o.user u "
+                        + "where u.user_id = :user_id ");
+        query.setParameter("user_id", user_id);
+
+        List<Object> resultListlist = query.getResultList();
+        if (resultListlist.size() == 0) {
+            return null;
+        }
+
+        AllOrderResultWrapper orders = new AllOrderResultWrapper();
+        orders.setUser_id(user_id);
+
+        List<OrderResultWrapper> list = new ArrayList<>();
+
+        for (Object aRow : resultListlist) {
+            OrderResultWrapper order = getOrderDetailForUser((int) aRow, user_id);
+            list.add(order);
+        }
+
+        orders.setOrders(list);
+
+        return orders;
+    }
+
+    public AllOrderResultAdminWrapper getAllOrdersForAdmin() {
+        Session session = getCurrentSession();
+        Query query = session.createQuery(
+                "select o.order_id, u.user_id "
+                        + "from Order o "
+                        + "JOIN o.user u ");
+
+        List<Object[]> resultListlist = query.getResultList();
+        if (resultListlist.size() == 0) {
+            return null;
+        }
+
+        AllOrderResultAdminWrapper orders = new AllOrderResultAdminWrapper();
+
+        List<OrderResultAdminWrapper> list = new ArrayList<>();
+        for (Object[] aRow : resultListlist) {
+            OrderResultAdminWrapper order = getOrderDetailForAdmin((int) aRow[0]);
+            list.add(order);
+        }
+
+        orders.setOrders(list);
+
+        return orders;
     }
 
     public OrderResultAdminWrapper getOrderDetailForAdmin(int order_id) {
@@ -135,7 +195,7 @@ public class OrderDao extends AbstractHibernateDao<Order> {
         order.setOrder_status((String) resultListlist.get(0)[6]);
         order.setDate_placed((String) resultListlist.get(0)[7]);
         order.setUser_id((int) resultListlist.get(0)[8]);
-
+        order.setOrder_id(order_id);
         for (Object[] aRow : resultListlist) {
             OrderItemAdminWrapper orderItem = OrderItemAdminWrapper.builder()
                     .product_id((Integer) aRow[0]) //product_id
@@ -195,8 +255,27 @@ public class OrderDao extends AbstractHibernateDao<Order> {
 
             row = query.executeUpdate();
 
-            transaction.commit();
+            if (row != 0) {
+                // status already updated in this session but not on database
+                query = session.createQuery(
+                        "select p.product_id, p.stock_quantity, oi.purchased_quantity "
+                                + "from OrderItem oi "
+                                + "JOIN oi.product p "
+                                + "JOIN oi.order o "
+                                + "where o.order_id = :order_id "
+                                + "and o.order_status ='Canceled' ");
+                query.setParameter("order_id", order_id);
 
+                List<Object[]> resultListlist = query.getResultList();
+
+                for (Object[] aRow : resultListlist) {
+                    Product p = session.get(Product.class, (int) aRow[0]);
+                    p.setStock_quantity((int) aRow[1] + (int) aRow[2]);
+                    session.save(p);
+                }
+
+            }
+            transaction.commit();
         } catch (Exception e) {
             e.printStackTrace();
 //            if (transaction != null) transaction.rollback();

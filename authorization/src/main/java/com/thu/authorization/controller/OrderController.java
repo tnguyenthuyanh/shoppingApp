@@ -9,10 +9,7 @@ import com.thu.authorization.domain.response.AllProductResponse;
 import com.thu.authorization.domain.response.OrderResponse;
 import com.thu.authorization.domain.response.OrderUpdateResponse;
 import com.thu.authorization.domain.response.ProductResponse;
-import com.thu.authorization.domain.wrapper.OrderItemResultWrapper;
-import com.thu.authorization.domain.wrapper.OrderResultAdminWrapper;
-import com.thu.authorization.domain.wrapper.OrderResultWrapper;
-import com.thu.authorization.domain.wrapper.ProductResultWrapper;
+import com.thu.authorization.domain.wrapper.*;
 import com.thu.authorization.service.OrderService;
 import com.thu.authorization.service.ProductService;
 import com.thu.authorization.service.UserService;
@@ -41,7 +38,7 @@ public class OrderController {
 
     @PostMapping()
     @PreAuthorize("hasAuthority('read')")
-    public OrderResponse createOrder(@RequestBody OrderRequest request){
+    public OrderResponse createOrder(@RequestBody OrderRequest request) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int user_id = userService.getUserIdByUsername(username);
 
@@ -56,7 +53,7 @@ public class OrderController {
                     )
                     .message("Cannot place order! Some item(s) do not exist or out of stock")
                     .build();
-        } else if (order_id == -2 ) { //not enough inventory
+        } else if (order_id == -2) { //not enough inventory
             return OrderResponse.builder()
                     .serviceStatus(
                             ServiceStatus.builder()
@@ -65,8 +62,7 @@ public class OrderController {
                     )
                     .message("Cannot place order due to not enough inventory!")
                     .build();
-        }
-        else {
+        } else {
             return OrderResponse.builder()
                     .serviceStatus(
                             ServiceStatus.builder()
@@ -76,6 +72,31 @@ public class OrderController {
                     .message("New order placed!")
                     .build();
         }
+
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasAuthority('read')")
+    public OrderResponse getAllOrders() {
+        Object object;
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("write"))) {
+            AllOrderResultAdminWrapper orders = orderService.getAllOrdersForAdmin();
+            object = orders;
+        } else {
+            String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            int user_id = userService.getUserIdByUsername(username);
+            AllOrderResultWrapper orders = orderService.getAllOrdersForUser(user_id);
+            object = orders;
+        }
+        return OrderResponse.builder()
+                .serviceStatus(
+                        ServiceStatus.builder()
+                                .success(true)
+                                .build()
+                )
+                .order(object)
+                .build();
 
     }
 
@@ -98,7 +119,7 @@ public class OrderController {
             object = order;
         }
 
-        if(check == false) {
+        if (check == false) {
             return OrderResponse.builder()
                     .serviceStatus(
                             ServiceStatus.builder()
@@ -196,6 +217,22 @@ public class OrderController {
                                 .build()
                 )
                 .message("Order is completed")
+                .build();
+
+    }
+
+    @GetMapping("/user/{user_id}")
+    @PreAuthorize("hasAuthority('write')")
+    public OrderResponse getAllOrdersByUserIdForAdmin(@PathVariable Integer user_id) {
+        AllOrderResultWrapper orders = orderService.getAllOrdersForUser(user_id);
+
+        return OrderResponse.builder()
+                .serviceStatus(
+                        ServiceStatus.builder()
+                                .success(true)
+                                .build()
+                )
+                .order(orders)
                 .build();
 
     }

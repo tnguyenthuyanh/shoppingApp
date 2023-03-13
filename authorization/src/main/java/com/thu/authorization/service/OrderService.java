@@ -5,10 +5,7 @@ import com.thu.authorization.dao.ProductDao;
 import com.thu.authorization.domain.entity.Order;
 import com.thu.authorization.domain.entity.Product;
 import com.thu.authorization.domain.request.OrderRequest;
-import com.thu.authorization.domain.wrapper.OrderItemResultWrapper;
-import com.thu.authorization.domain.wrapper.OrderResultAdminWrapper;
-import com.thu.authorization.domain.wrapper.OrderResultWrapper;
-import com.thu.authorization.domain.wrapper.ProductResultWrapper;
+import com.thu.authorization.domain.wrapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,5 +47,12 @@ public class OrderService {
 
     public boolean completeOrder(int order_id) {
         return orderDao.completeOrder(order_id);
+    }
+    public AllOrderResultWrapper getAllOrdersForUser(int user_id) {
+        return orderDao.getAllOrdersForUser(user_id);
+    }
+
+    public AllOrderResultAdminWrapper getAllOrdersForAdmin() {
+        return orderDao.getAllOrdersForAdmin();
     }
 }

@@ -10,13 +10,8 @@ import java.util.List;
 @AllArgsConstructor //constructor for fetching product for user view in OrderDao
 @NoArgsConstructor
 @Builder
-public class OrderResultWrapper {
+public class AllOrderResultAdminWrapper {
 
-    private int order_id;
-    private int user_id;
-    private String order_status;
-    private String date_placed;
-
-    List<OrderItemResultWrapper> orderItems;
+    List<OrderResultAdminWrapper> orders;
 
 }

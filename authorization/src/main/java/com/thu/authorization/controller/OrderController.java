@@ -5,10 +5,7 @@ import com.thu.authorization.domain.entity.Order;
 import com.thu.authorization.domain.entity.Product;
 import com.thu.authorization.domain.entity.User;
 import com.thu.authorization.domain.request.OrderRequest;
-import com.thu.authorization.domain.response.AllProductResponse;
-import com.thu.authorization.domain.response.OrderResponse;
-import com.thu.authorization.domain.response.OrderUpdateResponse;
-import com.thu.authorization.domain.response.ProductResponse;
+import com.thu.authorization.domain.response.*;
 import com.thu.authorization.domain.wrapper.*;
 import com.thu.authorization.service.OrderService;
 import com.thu.authorization.service.ProductService;
@@ -233,6 +230,23 @@ public class OrderController {
                                 .build()
                 )
                 .order(orders)
+                .build();
+    }
+
+    @GetMapping("/spent/{limit}")
+    @PreAuthorize("hasAuthority('write')")
+    public MostSpentResponse getMostSpent(@PathVariable Integer limit) {
+
+        List<MostSpentWrapper> response = orderService.getMostSpent(limit);
+
+        return MostSpentResponse.builder()
+                .serviceStatus(
+                        ServiceStatus.builder()
+                                .success(true)
+                                .build()
+                )
+                .message("Top " + limit + " spent")
+                .mostSpentResponse(response)
                 .build();
 
     }

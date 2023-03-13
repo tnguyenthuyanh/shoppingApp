@@ -5,6 +5,7 @@ import com.thu.authorization.domain.entity.OrderItem;
 import com.thu.authorization.domain.entity.Product;
 import com.thu.authorization.domain.entity.User;
 import com.thu.authorization.domain.request.OrderRequest;
+import com.thu.authorization.domain.response.MostSpentResponse;
 import com.thu.authorization.domain.wrapper.*;
 import org.aspectj.weaver.ast.Or;
 import org.hibernate.Session;
@@ -308,34 +309,35 @@ public class OrderDao extends AbstractHibernateDao<Order> {
     }
 
 
-//
-//    public List<Product> getAllProductsForAdmin() {
-//        Session session = getCurrentSession();
-//        CriteriaBuilder builder = session.getCriteriaBuilder();
-//        CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
-//        Root<Product> root = criteria.from(Product.class);
-//        criteria.select(root);
-//        Query query = session.createQuery(criteria);
-//        List<Product> products = query.getResultList();
-//        return products;
-//    }
-//
-//    public Product getProductByIdForAdmin(int id) {
-//        return this.findById(id);
-//    }
-//
-//    public ProductResultWrapper getProductByIdForUser(int id) {
-//        Session session = getCurrentSession();
-//        CriteriaBuilder builder = session.getCriteriaBuilder();
-//        CriteriaQuery<ProductResultWrapper> criteria = builder.createQuery(ProductResultWrapper.class);
-//        Root<Product> root = criteria.from(Product.class);
-//        criteria.multiselect(root.get("product_id"), root.get("name"), root.get("description"), root.get("retail_price"));
-//        criteria.where(builder.and
-//                (builder.notEqual(root.get("stock_quantity"), 0), builder.equal(root.get("product_id"), id)));
-//        Query query = session.createQuery(criteria);
-//        List<ProductResultWrapper> products = query.getResultList();
-//
-//        return products.size() == 0 ? null : products.get(0);
-//    }
+    public List<MostSpentWrapper> getMostSpent(int limit) {
+        Session session = getCurrentSession();
+        Query query = session.createQuery(
+                "select sum(oi.purchased_price*oi.purchased_quantity) as spent, u.email "
+                        + "from OrderItem oi "
+                        + "JOIN oi.order o "
+                        + "JOIN o.user u "
+                        + "where o.order_status = 'Completed' "
+        + "group by u.email "
+                + "order by spent desc " );
+
+        query.setMaxResults(limit);
+
+        List<Object[]> resultListlist = query.getResultList();
+        if (resultListlist.size() == 0) {
+            return null;
+        }
+
+        List<MostSpentWrapper> list = new ArrayList<>();
+
+        for (Object[] aRow : resultListlist) {
+            MostSpentWrapper mostSpentWrapper = MostSpentWrapper.builder()
+                    .moneySpent((double) aRow[0])
+                    .email((String) aRow[1])
+                    .build();
+            list.add(mostSpentWrapper);
+        }
+
+        return list;
+    }
 
 }

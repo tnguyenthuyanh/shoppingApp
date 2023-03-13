@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .antMatchers("/order/{id}/canceled").hasAuthority("read")
                 .antMatchers("/order/{id}/completed").hasAuthority("write")
                 .antMatchers("/order/user/**").hasAuthority("write")
+                .antMatchers("/order/spent/**").hasAuthority("write")
 
 //                .antMatchers("/content/getAll", "/content/get/*").hasAuthority("read")
 //                .antMatchers("/content/create").hasAuthority("write")

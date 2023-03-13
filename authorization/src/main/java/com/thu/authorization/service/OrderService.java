@@ -48,11 +48,16 @@ public class OrderService {
     public boolean completeOrder(int order_id) {
         return orderDao.completeOrder(order_id);
     }
+
     public AllOrderResultWrapper getAllOrdersForUser(int user_id) {
         return orderDao.getAllOrdersForUser(user_id);
     }
 
     public AllOrderResultAdminWrapper getAllOrdersForAdmin() {
         return orderDao.getAllOrdersForAdmin();
+    }
+
+    public List<MostSpentWrapper> getMostSpent(int limit) {
+        return orderDao.getMostSpent(limit);
     }
 }

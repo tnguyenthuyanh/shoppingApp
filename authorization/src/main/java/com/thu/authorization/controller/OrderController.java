@@ -139,7 +139,7 @@ public class OrderController {
                 .build();
     }
 
-    @GetMapping("/{id}/canceled")
+    @PatchMapping("/{id}/cancel")
     @PreAuthorize("hasAuthority('read')")
     public OrderUpdateResponse cancelOrderById(@PathVariable Integer id) {
         String message = null;
@@ -191,7 +191,7 @@ public class OrderController {
 
     }
 
-    @GetMapping("/{id}/completed")
+    @PatchMapping("/{id}/complete")
     @PreAuthorize("hasAuthority('write')")
     public OrderUpdateResponse completeOrderById(@PathVariable Integer id) {
         boolean canCompleteOrder = orderService.completeOrder(id);
@@ -233,7 +233,7 @@ public class OrderController {
                 .build();
     }
 
-    @GetMapping("/spent/{limit}")
+    @GetMapping("/spend/{limit}")
     @PreAuthorize("hasAuthority('write')")
     public MostSpentResponse getMostSpent(@PathVariable Integer limit) {
 

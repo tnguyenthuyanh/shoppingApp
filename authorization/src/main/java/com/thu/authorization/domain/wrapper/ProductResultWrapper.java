@@ -1,10 +1,12 @@
 package com.thu.authorization.domain.wrapper;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
+@Builder
 public class ProductResultWrapper {
 
     // constructor for fetching product for user view in ProductDao

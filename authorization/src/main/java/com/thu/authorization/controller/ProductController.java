@@ -126,36 +126,26 @@ public class ProductController {
 
 
     }
-//
-//    @PostMapping("create")
-//    @PreAuthorize("hasAuthority('write')")
-//    public MessageResponse createContent(@RequestBody OrderRequest request){
-//        contentService.createContent(request);
-//
-//        return MessageResponse.builder()
-//                .serviceStatus(
-//                        ServiceStatus.builder()
-//                                .success(true)
-//                                .build()
-//                )
-//                .message("New content created")
-//                .build();
-//    }
-//
-//    @PutMapping("update")
-//    @PreAuthorize("hasAuthority('update')")
-//    public MessageResponse updateContent(@RequestBody ProductRequest request){
-//        contentService.updateContent(request);
-//
-//        return MessageResponse.builder()
-//                .serviceStatus(
-//                        ServiceStatus.builder()
-//                                .success(true)
-//                                .build()
-//                )
-//                .message("Content updated")
-//                .build();
-//    }
+
+    @PatchMapping("/update/{product_id}")
+    @PreAuthorize("hasAuthority('write')")
+    public ProductResponse updateProduct(@RequestBody ProductRequest request, @PathVariable Integer product_id) {
+
+        productService.updateProduct(request, product_id);
+
+        return ProductResponse.builder()
+                .serviceStatus(
+                        ServiceStatus.builder()
+                                .success(true)
+                                .build()
+                )
+                .message("Product updated!")
+                .product(request)
+                .build();
+
+
+    }
+
 //
 //    @DeleteMapping("delete/{id}")
 //    @PreAuthorize("hasAuthority('delete')")

@@ -28,4 +28,5 @@ public class ProductWatchlist {
     @JoinColumn(name = "user_id", nullable = false)
     @ToString.Exclude
     private User user;
+
 }

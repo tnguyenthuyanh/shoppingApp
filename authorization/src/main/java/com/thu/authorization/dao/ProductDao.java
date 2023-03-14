@@ -2,9 +2,8 @@ package com.thu.authorization.dao;
 
 import com.thu.authorization.domain.entity.*;
 //import com.thu.authorization.domain.wrapper.ProductResultWrapper;
-import com.thu.authorization.domain.request.OrderRequest;
 import com.thu.authorization.domain.request.ProductRequest;
-import com.thu.authorization.domain.wrapper.ProductResultWrapper;
+import com.thu.authorization.domain.wrapper.*;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
@@ -227,6 +226,118 @@ public class ProductDao extends AbstractHibernateDao<Product> {
         }
         return list;
 
+    }
+
+    public List<MostFrequentlyPurchasedWrapper> getMostFrequentlyPurchased(String username, int limit) {
+        Session session = getCurrentSession();
+        Query query = session.createQuery(
+                "select sum(oi.purchased_quantity) as quantity, oi.product.product_id, oi.product.name, oi.product.description "
+                        + "from OrderItem oi "
+                        + "where oi.order.order_status != 'Canceled' "
+                        + "and oi.order.user.email = :username "
+                        + "group by oi.product.product_id "
+                        + "order by quantity desc ");
+        query.setParameter("username", username);
+        query.setMaxResults(limit);
+
+        List<Object[]> resultList = query.getResultList();
+        List<MostFrequentlyPurchasedWrapper> list = new ArrayList<>();
+
+        for (Object[] aRow : resultList) {
+            MostFrequentlyPurchasedWrapper item = MostFrequentlyPurchasedWrapper.builder()
+                    .purchased_quantity(((Long) aRow[0]).intValue())
+                    .product_id((int) aRow[1])
+                    .name((String) aRow[2])
+                    .description((String) aRow[3])
+                    .build();
+            list.add(item);
+        }
+
+        return list;
+    }
+
+    public List<MostRecentlyPurchasedWrapper> getMostRecentlyPurchased(String username, int limit) {
+        Session session = getCurrentSession();
+        Query query = session.createQuery(
+                "select oi.order.date_placed, oi.product.product_id, oi.product.name, oi.product.description, "
+                        + "oi.purchased_quantity, oi.purchased_price "
+                        + "from OrderItem oi "
+                        + "where oi.order.order_status != 'Canceled' "
+                        + "and oi.order.user.email = :username "
+                        + "order by oi.order.date_placed desc ");
+        query.setParameter("username", username);
+        query.setMaxResults(limit);
+
+        List<Object[]> resultList = query.getResultList();
+        List<MostRecentlyPurchasedWrapper> list = new ArrayList<>();
+
+        for (Object[] aRow : resultList) {
+            MostRecentlyPurchasedWrapper item = MostRecentlyPurchasedWrapper.builder()
+                    .date_placed((String) aRow[0])
+                    .product_id((int) aRow[1])
+                    .name((String) aRow[2])
+                    .description((String) aRow[3])
+                    .purchased_quantity((int) aRow[4])
+                    .purchased_price((double) aRow[5])
+                    .build();
+            list.add(item);
+        }
+
+        return list;
+    }
+
+    public List<MostFrequentlyPurchasedWrapper> getMostPopularProducts(int limit) {
+        Session session = getCurrentSession();
+        Query query = session.createQuery(
+                "select sum(oi.purchased_quantity) as quantity, oi.product.product_id, oi.product.name, oi.product.description "
+                        + "from OrderItem oi "
+                        + "where oi.order.order_status = 'Completed' "
+                        + "group by oi.product.product_id "
+                        + "order by quantity desc ");
+        query.setMaxResults(limit);
+
+        List<Object[]> resultList = query.getResultList();
+        List<MostFrequentlyPurchasedWrapper> list = new ArrayList<>();
+
+        for (Object[] aRow : resultList) {
+            MostFrequentlyPurchasedWrapper item = MostFrequentlyPurchasedWrapper.builder()
+                    .purchased_quantity(((Long) aRow[0]).intValue())
+                    .product_id((int) aRow[1])
+                    .name((String) aRow[2])
+                    .description((String) aRow[3])
+                    .build();
+            list.add(item);
+        }
+
+        return list;
+    }
+
+    public List<MostProfitProductWrapper> getMostProfitProducts(int limit) {
+        Session session = getCurrentSession();
+        Query query = session.createQuery(
+                "select Sum((oi.purchased_quantity*(oi.purchased_price-oi.wholesale_price))) as profit, "
+                        + "oi.product.product_id, oi.product.name, oi.product.description "
+                        + "from OrderItem oi "
+                        + "where oi.order.order_status = 'Completed' "
+                        + "group by oi.product.product_id "
+                        + "order by profit desc ");
+        query.setMaxResults(limit);
+
+        List<Object[]> resultList = query.getResultList();
+        List<MostProfitProductWrapper> list = new ArrayList<>();
+
+        for (Object[] aRow : resultList) {
+            double profit = (double) aRow[0];
+            MostProfitProductWrapper item = MostProfitProductWrapper.builder()
+                    .profit(Math.round(profit*100)/100.0)
+                    .product_id((int) aRow[1])
+                    .name((String) aRow[2])
+                    .description((String) aRow[3])
+                    .build();
+            list.add(item);
+        }
+
+        return list;
     }
 
 }

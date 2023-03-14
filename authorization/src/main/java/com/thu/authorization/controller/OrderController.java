@@ -67,6 +67,7 @@ public class OrderController {
                                     .build()
                     )
                     .message("New order placed!")
+                    .order(request)
                     .build();
         }
 
@@ -250,37 +251,6 @@ public class OrderController {
                 .build();
 
     }
-
-//
-//    @PutMapping("update")
-//    @PreAuthorize("hasAuthority('update')")
-//    public MessageResponse updateContent(@RequestBody ProductRequest request){
-//        contentService.updateContent(request);
-//
-//        return MessageResponse.builder()
-//                .serviceStatus(
-//                        ServiceStatus.builder()
-//                                .success(true)
-//                                .build()
-//                )
-//                .message("Content updated")
-//                .build();
-//    }
-//
-//    @DeleteMapping("delete/{id}")
-//    @PreAuthorize("hasAuthority('delete')")
-//    public MessageResponse deleteContent(@PathVariable Integer id){
-//        contentService.deleteContent(id);
-//
-//        return MessageResponse.builder()
-//                .serviceStatus(
-//                        ServiceStatus.builder()
-//                                .success(true)
-//                                .build()
-//                )
-//                .message("Content deleted")
-//                .build();
-//    }
 
 
 }

@@ -50,29 +50,6 @@ public abstract class AbstractHibernateDao<T> {
         return possibleUser;
     }
 
-//    public void createNewUser(String email, String password) {
-//
-//        try (Session session = getCurrentSession()) {
-//            Transaction transaction = null;
-//            transaction = session.beginTransaction();
-//
-//            User user = User.builder().email(email).password(password).build();
-////            int user_id = (Integer) session.save(user); // get back user generated id
-//            session.save(user);
-////            Permission permission = Permission.builder().user(user).build();
-////            session.save(permission);
-//            transaction.commit();
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
-
-
-//    public void add(T item) {
-//        getCurrentSession().save(item);
-//    }
 
     protected Session getCurrentSession() {
         return sessionFactory.getCurrentSession();

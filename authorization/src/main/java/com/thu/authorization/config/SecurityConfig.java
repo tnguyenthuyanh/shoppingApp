@@ -28,23 +28,16 @@ public class SecurityConfig {
                 .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/product/test").permitAll()
-                .antMatchers("/product/all").hasAuthority("read")
                 .antMatchers("/product/add").hasAuthority("write")
-                .antMatchers("/product/update/**").hasAuthority("write")
-                .antMatchers("/order/{id}/cancel").hasAuthority("read")
-                .antMatchers("/order/{id}/complete").hasAuthority("write")
-                .antMatchers("/order/user/**").hasAuthority("write")
-                .antMatchers("/order/spend/**").hasAuthority("write")
-
-//                .antMatchers("/content/getAll", "/content/get/*").hasAuthority("read")
-//                .antMatchers("/content/create").hasAuthority("write")
-//                .antMatchers("/content/update").hasAuthority("update")
-//                .antMatchers("/content/delete/*").hasAuthority("delete")
+                .antMatchers("/product/all", "/product/{id}").hasAuthority("read")
+                .antMatchers( "/product/update/**", "/product/popular/**", "/product/profit/**").hasAuthority("write")
+                .antMatchers("/order","/order/all", "/order/{id}", "/order/{id}/cancel").hasAuthority("read")
+                .antMatchers("/order/{id}/complete", "/order/spend/**", "/order/user/**").hasAuthority("write")
+                .antMatchers("/watchlist/**", "/product/frequent/*", "/product/recent/*").hasAuthority("read")
                 .anyRequest()
                 .authenticated();
         return http.build();
     }
-
 
 
 }

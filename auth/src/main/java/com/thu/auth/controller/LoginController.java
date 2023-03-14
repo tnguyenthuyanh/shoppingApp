@@ -2,6 +2,7 @@ package com.thu.auth.controller;
 
 import com.thu.auth.domain.common.AuthRequest;
 import com.thu.auth.domain.common.Response;
+import com.thu.auth.domain.exception.InvalidCredentialsException;
 import com.thu.auth.security.AuthUserDetail;
 import com.thu.auth.security.JwtProvider;
 import com.thu.auth.service.UserService;
@@ -19,12 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     private AuthenticationManager authenticationManager;
-    private UserService userService;
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
 
     @Autowired
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
@@ -50,10 +45,9 @@ public class LoginController {
                   new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
           );
 
-
-        } catch (AuthenticationException e){
+        }
+        catch (AuthenticationException e){
             throw new BadCredentialsException("Provided credential is invalid.");
-
         }
 
         //Successfully authenticated user will be stored in the authUserDetail object

@@ -5,6 +5,7 @@ import com.thu.authorization.domain.entity.Product;
 import com.thu.authorization.domain.request.ProductRequest;
 import com.thu.authorization.domain.response.AllProductResponse;
 import com.thu.authorization.domain.response.ProductResponse;
+import com.thu.authorization.domain.response.ProductUpdateResponse;
 import com.thu.authorization.domain.wrapper.ProductResultWrapper;
 import com.thu.authorization.service.ProductService;
 import com.thu.authorization.service.UserService;
@@ -32,50 +33,16 @@ public class WatchListController {
         this.userService = userService;
     }
 
-//
-//    @GetMapping("/all")
-//    @PreAuthorize("hasAuthority('read')")
-//    public AllProductResponse getAllProductsForAdmin() {
-//
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("write"))) {
-//            List<Product> products = productService.getAllProductsForAdmin();
-//            List<Object> objects = (List) products;
-//
-//            return AllProductResponse.builder()
-//                    .serviceStatus(
-//                            ServiceStatus.builder()
-//                                    .success(true)
-//                                    .build()
-//                    )
-//                    .products(objects)
-//                    .build();
-//        } else {
-//            List<ProductResultWrapper> products = productService.getAllProductsForUser();
-//            List<Object> objects = (List) products;
-//
-//            return AllProductResponse.builder()
-//                    .serviceStatus(
-//                            ServiceStatus.builder()
-//                                    .success(true)
-//                                    .build()
-//                    )
-//                    .products(objects)
-//                    .build();
-//        }
-//
-//
-//    }
 
     @PostMapping("/product/{product_id}")
     @PreAuthorize("hasAuthority('read')")
-    public ProductResponse updateProduct(@PathVariable Integer product_id) {
+    public ProductUpdateResponse addToWatchlist(@PathVariable Integer product_id) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int user_id = userService.getUserIdByUsername(username);
 
         List<ProductResultWrapper> list = productService.getAllProductsForUser();
         if (list.stream().filter(e -> e.getProduct_id() == product_id).findAny().isPresent() == false) { //stock quantity = 0
-            return ProductResponse.builder()
+            return ProductUpdateResponse.builder()
                     .serviceStatus(
                             ServiceStatus.builder()
                                     .success(true)
@@ -87,7 +54,7 @@ public class WatchListController {
             boolean success = productService.addToWatchlist(product_id, user_id);
 
             if (success) {
-                return ProductResponse.builder()
+                return ProductUpdateResponse.builder()
                         .serviceStatus(
                                 ServiceStatus.builder()
                                         .success(true)
@@ -97,7 +64,7 @@ public class WatchListController {
                         .build();
             }
 
-            return ProductResponse.builder()
+            return ProductUpdateResponse.builder()
                     .serviceStatus(
                             ServiceStatus.builder()
                                     .success(false)
@@ -110,14 +77,14 @@ public class WatchListController {
 
     @DeleteMapping("/product/{product_id}")
     @PreAuthorize("hasAuthority('read')")
-    public ProductResponse removeFromWatchList(@PathVariable Integer product_id) {
+    public ProductUpdateResponse removeFromWatchList(@PathVariable Integer product_id) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int user_id = userService.getUserIdByUsername(username);
 
         boolean success = productService.removeFromWatchlist(product_id, user_id);
 
         if (success) {
-            return ProductResponse.builder()
+            return ProductUpdateResponse.builder()
                     .serviceStatus(
                             ServiceStatus.builder()
                                     .success(true)
@@ -127,7 +94,7 @@ public class WatchListController {
                     .build();
         }
 
-        return ProductResponse.builder()
+        return ProductUpdateResponse.builder()
                 .serviceStatus(
                         ServiceStatus.builder()
                                 .success(false)
@@ -157,20 +124,6 @@ public class WatchListController {
                 .build();
     }
 
-//
-//    @DeleteMapping("delete/{id}")
-//    @PreAuthorize("hasAuthority('delete')")
-//    public MessageResponse deleteContent(@PathVariable Integer id){
-//        contentService.deleteContent(id);
-//
-//        return MessageResponse.builder()
-//                .serviceStatus(
-//                        ServiceStatus.builder()
-//                                .success(true)
-//                                .build()
-//                )
-//                .message("Content deleted")
-//                .build();
-//    }
+
 
 }

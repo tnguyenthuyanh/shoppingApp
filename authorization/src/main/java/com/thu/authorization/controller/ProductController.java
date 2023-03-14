@@ -6,11 +6,13 @@ import com.thu.authorization.domain.request.OrderRequest;
 import com.thu.authorization.domain.request.ProductRequest;
 import com.thu.authorization.domain.response.AllProductResponse;
 import com.thu.authorization.domain.entity.Product;
+import com.thu.authorization.domain.response.MostSpentResponse;
 import com.thu.authorization.domain.response.OrderResponse;
 import com.thu.authorization.domain.response.ProductResponse;
-import com.thu.authorization.domain.wrapper.ProductResultWrapper;
+import com.thu.authorization.domain.wrapper.*;
 import com.thu.authorization.security.AuthUserDetail;
 import com.thu.authorization.service.ProductService;
+import com.thu.authorization.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -18,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,10 +29,13 @@ import java.util.List;
 public class ProductController {
 
     private ProductService productService;
+    private UserService userService;
 
     @Autowired
-    public void setProductService(ProductService productService) {
+    public void setProductService(ProductService productService,
+                                  UserService userService) {
         this.productService = productService;
+        this.userService = userService;
     }
 
     @GetMapping("/test")
@@ -146,21 +152,73 @@ public class ProductController {
 
     }
 
-//
-//    @DeleteMapping("delete/{id}")
-//    @PreAuthorize("hasAuthority('delete')")
-//    public MessageResponse deleteContent(@PathVariable Integer id){
-//        contentService.deleteContent(id);
-//
-//        return MessageResponse.builder()
-//                .serviceStatus(
-//                        ServiceStatus.builder()
-//                                .success(true)
-//                                .build()
-//                )
-//                .message("Content deleted")
-//                .build();
-//    }
+    @GetMapping("/frequent/{limit}")
+    @PreAuthorize("hasAuthority('read')")
+    public ProductResponse getMostFrequentlyPurchased(@PathVariable Integer limit) {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<MostFrequentlyPurchasedWrapper> response = productService.getMostFrequentlyPurchased(username, limit);
 
+        return ProductResponse.builder()
+                .serviceStatus(
+                        ServiceStatus.builder()
+                                .success(true)
+                                .build()
+                )
+                .message("Top " + limit + " frequent")
+                .product(response)
+                .build();
+
+    }
+
+    @GetMapping("/recent/{limit}")
+    @PreAuthorize("hasAuthority('read')")
+    public ProductResponse getMostRecentlyPurchased(@PathVariable Integer limit) {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<MostRecentlyPurchasedWrapper> list = productService.getMostRecentlyPurchased(username, limit);
+
+        return ProductResponse.builder()
+                .serviceStatus(
+                        ServiceStatus.builder()
+                                .success(true)
+                                .build()
+                )
+                .message("Most recently purchased")
+                .product(list)
+                .build();
+    }
+
+    @GetMapping("/popular/{limit}")
+    @PreAuthorize("hasAuthority('write')")
+    public ProductResponse getMostPopularProduct(@PathVariable Integer limit) {
+
+        List<MostFrequentlyPurchasedWrapper> list = productService.getMostPopularProducts(limit);
+
+        return ProductResponse.builder()
+                .serviceStatus(
+                        ServiceStatus.builder()
+                                .success(true)
+                                .build()
+                )
+                .message("Most popular products")
+                .product(list)
+                .build();
+    }
+
+    @GetMapping("/profit/{limit}")
+    @PreAuthorize("hasAuthority('write')")
+    public ProductResponse getMostProfitProducts(@PathVariable Integer limit) {
+
+        List<MostProfitProductWrapper> list = productService.getMostProfitProducts(limit);
+
+        return ProductResponse.builder()
+                .serviceStatus(
+                        ServiceStatus.builder()
+                                .success(true)
+                                .build()
+                )
+                .message("Most profit products")
+                .product(list)
+                .build();
+    }
 
 }

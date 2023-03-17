@@ -1,8 +1,10 @@
 package com.thu.auth.service;
 
 import com.thu.auth.dao.UserDao;
+import com.thu.auth.domain.common.AuthRequest;
 import com.thu.auth.domain.entity.Permission;
 import com.thu.auth.domain.entity.User;
+import com.thu.auth.domain.exception.InvalidCredentialsException;
 import com.thu.auth.security.AuthUserDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,7 +33,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> userOptional = userDao.loadUserByUsername(email);
 
-        if (!userOptional.isPresent()){
+        if (!userOptional.isPresent()) {
             throw new UsernameNotFoundException("Username does not exist");
         }
 
@@ -48,10 +50,10 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    private List<GrantedAuthority> getAuthoritiesFromUser(User user){
+    private List<GrantedAuthority> getAuthoritiesFromUser(User user) {
         List<GrantedAuthority> userAuthorities = new ArrayList<>();
 
-        for (Permission permission :  user.getPermissions()){
+        for (Permission permission : user.getPermissions()) {
             userAuthorities.add(new SimpleGrantedAuthority(permission.getValue()));
         }
 
@@ -61,7 +63,7 @@ public class UserService implements UserDetailsService {
     public boolean canUseUsername(String email) throws UsernameNotFoundException {
         Optional<User> userOptional = userDao.loadUserByUsername(email);
 
-        if (!userOptional.isPresent()){
+        if (!userOptional.isPresent()) {
             return true;
         }
 
@@ -70,6 +72,19 @@ public class UserService implements UserDetailsService {
 
     public void createNewUser(String email, String password) {
         userDao.createNewUser(email, password);
+    }
+
+    public void validateUserInfo(AuthRequest request) throws InvalidCredentialsException {
+
+        Optional<User> userOptional = userDao.loadUserByUsername(request.getUsername());
+
+        if (!userOptional.isPresent()) {
+            throw new InvalidCredentialsException("No user found");
+
+        } else if (!request.getPassword().equals(userOptional.get().getPassword())) {
+            throw new InvalidCredentialsException("Incorrect password");
+        }
+
     }
 
 }

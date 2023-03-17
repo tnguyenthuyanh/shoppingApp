@@ -20,10 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     private AuthenticationManager authenticationManager;
+    private UserService userService;
 
     @Autowired
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+    public void setAuthenticationManager(AuthenticationManager authenticationManager, UserService userService) {
         this.authenticationManager = authenticationManager;
+        this.userService = userService;
     }
 
     private JwtProvider jwtProvider;
@@ -35,7 +37,9 @@ public class LoginController {
 
     //User trying to log in with username and password
     @PostMapping("/login")
-    public Response login(@RequestBody AuthRequest request){
+    public Response login(@RequestBody AuthRequest request) throws InvalidCredentialsException {
+
+        userService.validateUserInfo(request);
 
         Authentication authentication;
 

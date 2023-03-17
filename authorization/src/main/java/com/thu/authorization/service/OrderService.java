@@ -4,6 +4,7 @@ import com.thu.authorization.dao.OrderDao;
 import com.thu.authorization.dao.ProductDao;
 import com.thu.authorization.domain.entity.Order;
 import com.thu.authorization.domain.entity.Product;
+import com.thu.authorization.domain.exception.NotEnoughInventoryException;
 import com.thu.authorization.domain.request.OrderRequest;
 import com.thu.authorization.domain.wrapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,12 @@ public class OrderService {
         this.orderDao = orderDao;
     }
 
-    public int placeNewOrder(OrderRequest request, int user_id) {
-        return orderDao.placeNewOrder(request, user_id);
+    public int placeNewOrder(OrderRequest request, int user_id) throws NotEnoughInventoryException {
+        int n = orderDao.placeNewOrder(request, user_id);
+        if (n == -2 ) {
+            throw new NotEnoughInventoryException("Not enough inventory");
+        }
+        return n;
     }
 
     public OrderResultWrapper getOrderDetailForUser(int order_id, int user_id) {

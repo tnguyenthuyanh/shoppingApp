@@ -4,6 +4,7 @@ import com.thu.authorization.domain.ServiceStatus;
 import com.thu.authorization.domain.entity.Order;
 import com.thu.authorization.domain.entity.Product;
 import com.thu.authorization.domain.entity.User;
+import com.thu.authorization.domain.exception.NotEnoughInventoryException;
 import com.thu.authorization.domain.request.OrderRequest;
 import com.thu.authorization.domain.response.*;
 import com.thu.authorization.domain.wrapper.*;
@@ -35,7 +36,7 @@ public class OrderController {
 
     @PostMapping()
     @PreAuthorize("hasAuthority('read')")
-    public OrderResponse createOrder(@RequestBody OrderRequest request) {
+    public OrderResponse createOrder(@RequestBody OrderRequest request) throws NotEnoughInventoryException {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int user_id = userService.getUserIdByUsername(username);
 
@@ -50,16 +51,8 @@ public class OrderController {
                     )
                     .message("Cannot place order! Some item(s) do not exist or out of stock")
                     .build();
-        } else if (order_id == -2) { //not enough inventory
-            return OrderResponse.builder()
-                    .serviceStatus(
-                            ServiceStatus.builder()
-                                    .success(false)
-                                    .build()
-                    )
-                    .message("Cannot place order due to not enough inventory!")
-                    .build();
-        } else {
+        }
+        else {
             return OrderResponse.builder()
                     .serviceStatus(
                             ServiceStatus.builder()

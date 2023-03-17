@@ -16,7 +16,7 @@ public class ProductWatchlist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "productWatchlist_id", unique = true, nullable = false)
+    @Column(name = "productWatchlist_id", unique = true)
     private Integer productWatchlist_id;
 
     @ManyToOne(fetch = FetchType.LAZY)

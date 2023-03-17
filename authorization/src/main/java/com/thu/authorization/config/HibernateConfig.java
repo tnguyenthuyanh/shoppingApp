@@ -50,7 +50,7 @@ public class HibernateConfig {
         Properties hibernateProperties = new Properties();
         hibernateProperties.setProperty("hibernate.show_sql", hibernateProperty.getShowsql());
         hibernateProperties.setProperty("hibernate.dialect", hibernateProperty.getDialect());
-
+        hibernateProperties.setProperty("hibernate.hbm2ddl.auto", hibernateProperty.getHbm2ddl());
         return hibernateProperties;
     }
 }

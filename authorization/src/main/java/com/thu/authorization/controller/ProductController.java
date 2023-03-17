@@ -18,8 +18,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,7 +119,18 @@ public class ProductController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('write')")
-    public ProductResponse addProduct(@RequestBody ProductRequest request) {
+    public ProductResponse addProduct(@Valid @RequestBody ProductRequest request,
+                                      BindingResult bindingResult) {
+
+            // perform validation check
+            if (bindingResult.hasErrors()) {
+                List<FieldError> errors = bindingResult.getFieldErrors();
+                errors.forEach(error -> System.out.println(
+                        "ValidationError in " + error.getObjectName() + ": " + error.getDefaultMessage()));
+                return ProductResponse.builder()
+                        .message("Invalid input")
+                        .build();
+            }
 
         productService.addProduct(request);
 

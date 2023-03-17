@@ -22,4 +22,19 @@ public class UserDao extends AbstractHibernateDao<User> {
         Optional<User> user = this.findByEmail(email);
         return user.get().getUser_id();
     }
+
+//    public void createNewUser(String email, String password) {
+//        try (Session session = sessionFactory.openSession()) {
+//            Transaction transaction = null;
+//            transaction = session.beginTransaction();
+//
+//            User user = User.builder().email(email).password(password).build();
+////            int user_id = (Integer) session.save(user); // get back user generated id
+//            session.save(user);
+//            transaction.commit();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

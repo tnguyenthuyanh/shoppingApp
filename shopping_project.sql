@@ -81,6 +81,40 @@ select * from Permission;
 select * from Product;
 select * from Order_table;
 select * from OrderItem;
+select * from ProductWatchlist;
+
+-- update Order_table set order_status = "Canceled" where order_id = 5;
+-- update Order_table set order_status = "Processing" where order_id = 1;
+-- update Product set stock_quantity = 1 where product_id = 4;
+
+-- select sum(oi.purchased_price*oi.purchased_quantity) as spent, u.email from OrderItem oi
+-- join order_table o on o.order_id = oi.order_id 
+-- join User u on u.user_id = o.user_id
+-- where o.order_status = "Completed"
+-- group by u.email
+-- order by spent desc
+-- limit 2;
+
+-- select sum(purchased_quantity) as quantity, p.product_id, p.name, p.description
+-- from Product p
+-- join OrderItem oi on p.product_id = oi.product_id
+-- join Order_table o on o.order_id = oi.order_id
+-- where o.order_status = "Completed"
+-- group by p.product_id
+-- order by quantity desc;
 
 
+-- select o.date_placed, p.product_id, p.name, p.description, oi.purchased_quantity, oi.purchased_price
+-- from Product p
+-- join OrderItem oi on p.product_id = oi.product_id
+-- join Order_table o on o.order_id = oi.order_id
+-- where o.user_id = 2 and o.order_status != "Canceled"
+-- order by date_placed desc;
 
+-- select Sum((oi.purchased_quantity*(oi.purchased_price-oi.wholesale_price))) as profit, p.product_id, p.name, p.description
+-- from Product p
+-- join OrderItem oi on p.product_id = oi.product_id
+-- join Order_table o on o.order_id = oi.order_id
+-- where o.order_status = "Completed"
+-- group by p.product_id
+-- order by profit desc;

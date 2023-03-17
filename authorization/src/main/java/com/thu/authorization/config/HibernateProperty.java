@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("classpath:application.properties")
+//@PropertySource("classpath:application.properties")
 public class HibernateProperty {
 
     @Value("${database.hibernate.url}")
@@ -25,6 +25,10 @@ public class HibernateProperty {
 
     @Value("${database.hibernate.showsql}")
     private String showsql;
+
+    @Value("${database.hibernate.hbm2ddl.auto}")
+    private String hbm2ddl;
+
 
     public String getUrl() {
         return url;
@@ -72,6 +76,14 @@ public class HibernateProperty {
 
     public void setShowsql(String showsql) {
         this.showsql = showsql;
+    }
+
+    public String getHbm2ddl() {
+        return hbm2ddl;
+    }
+
+    public void setHbm2ddl(String hbm2ddl) {
+        this.hbm2ddl = hbm2ddl;
     }
 
 }

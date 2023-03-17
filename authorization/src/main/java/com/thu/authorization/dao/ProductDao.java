@@ -69,6 +69,7 @@ public class ProductDao extends AbstractHibernateDao<Product> {
             Transaction transaction = null;
             transaction = session.beginTransaction();
 
+
             Product product = Product.builder()
                     .name(request.getName())
                     .description(request.getDescription())
@@ -78,7 +79,6 @@ public class ProductDao extends AbstractHibernateDao<Product> {
                     .build();
 
             session.save(product);
-
             transaction.commit();
 
         } catch (Exception e) {
@@ -154,6 +154,7 @@ public class ProductDao extends AbstractHibernateDao<Product> {
                         .product(Product.builder().product_id(product_id).build())
                         .user(User.builder().user_id(user_id).build())
                         .build();
+
                 session.save(p);
                 success = true;
             }

@@ -10,7 +10,6 @@ import java.util.List;
 public class OrderRequest {
 
     List<OrderRequest> order;
-
     int product_id;
     int quantity;
 }

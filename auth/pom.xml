@@ -36,6 +36,17 @@
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>2.6.4</version>
+        </dependency>
         <!--Add this dependency if you encounter java.lang.NoClassDefFoundError: javax/xml/bind/DatatypeConverter error -->
         <dependency>
             <groupId>javax.xml.bind</groupId>

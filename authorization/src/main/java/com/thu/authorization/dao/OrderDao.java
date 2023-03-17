@@ -42,14 +42,14 @@ public class OrderDao extends AbstractHibernateDao<Order> {
                 Product product = session.get(Product.class, o.getProduct_id());
                 if (product == null || product.getStock_quantity() == 0) {
                     if (transaction != null) {
-//                        System.out.println("hehee");
+
                         transaction.rollback();
                     }
                     return -1;
                 } else {
                     if (o.getQuantity() > product.getStock_quantity()) {
                         if (transaction != null) {
-//                            System.out.println("hehee1111");
+
                             transaction.rollback();
                         }
                         return -2;

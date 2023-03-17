@@ -7,6 +7,7 @@ import com.thu.authorization.domain.wrapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -18,6 +19,7 @@ public class ProductService {
     public void setProductDao(ProductDao productDao) {
         this.productDao = productDao;
     }
+
 
     public List<ProductResultWrapper> getAllProductsForUser() {
         return productDao.getAllProductsForUser();

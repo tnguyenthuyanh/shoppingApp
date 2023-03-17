@@ -37,7 +37,8 @@ public class WatchListController {
     @PostMapping("/product/{product_id}")
     @PreAuthorize("hasAuthority('read')")
     public ProductUpdateResponse addToWatchlist(@PathVariable Integer product_id) {
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         int user_id = userService.getUserIdByUsername(username);
 
         List<ProductResultWrapper> list = productService.getAllProductsForUser();
@@ -78,7 +79,8 @@ public class WatchListController {
     @DeleteMapping("/product/{product_id}")
     @PreAuthorize("hasAuthority('read')")
     public ProductUpdateResponse removeFromWatchList(@PathVariable Integer product_id) {
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         int user_id = userService.getUserIdByUsername(username);
 
         boolean success = productService.removeFromWatchlist(product_id, user_id);
@@ -108,7 +110,9 @@ public class WatchListController {
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('read')")
     public AllProductResponse viewWatchlist() {
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // actually worked but debugged by test controller
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
         int user_id = userService.getUserIdByUsername(username);
 
         List<ProductResultWrapper> list = productService.viewWatchlist(user_id);
